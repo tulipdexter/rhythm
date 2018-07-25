@@ -41,18 +41,21 @@ class AudioManager {
             for (let i = 0; i < samples.length; i++)  {
                 this.matrix.push(new Array(numberOfSamples));
             }
+
+            console.log(this.matrix);
         });
     }
 
     addNote(sampleType, samplePosition) {
         const index = this.sampleTypes[sampleType];
-        this.matrix[index][samplePosition] = true;
+        console.log(index);
+        this.matrix[index][samplePosition] = true; // TODO: Check why this is here.  Think this stops multiple notes in same position.
     }
 
-    removeNote(sampleType, samplePosition) {
-        const index = this.sampleTypes[sampleType];
-        this.matrix[index][samplePosition] = false;
-    }
+    // removeNote(sampleType, samplePosition) {
+    //     const index = this.sampleTypes[sampleType];
+    //     this.matrix[index][samplePosition] = false;
+    // }
 
     start() {
         if (this.interval) return;
@@ -74,7 +77,7 @@ class AudioManager {
                 nextNoteTime += 60.0 / bpm;
                 currentStep = (currentStep + 1) % numberOfSamples;
             }
-        }, 100);
+        }, 0);
     }
 
     stop() {

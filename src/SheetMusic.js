@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 
 const sampleIndexToNote = {
-    0: 'g5',
-    1: 'e5',
-    2: 'a5'
+    0: 'hi-hat',
+    1: 'kick',
+    2: 'snare'
 };
 
 class SheetMusic extends Component {
@@ -25,9 +25,13 @@ class SheetMusic extends Component {
 
         return (
             <div className="bar" key={barIndex}>
-                <div className="stave-header"></div>
-                {classes.map(((noteClasses, idx) => <div key={idx} className={`quarter-note ${noteClasses}`}></div>))}
-                <div className="bar-line"></div>
+                {/*<div className="stave-header"></div>*/}
+                {classes.map(((noteClasses, idx) =>
+                    <div key={idx} className={'bar__span bar__span--quarter'}>
+                        <span className={`note note--quarter note--${noteClasses}`}></span>
+                    </div>
+                ))}
+                {/*<div className="bar-line"></div>*/}
             </div>
         );
     }
