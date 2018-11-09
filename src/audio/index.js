@@ -1,10 +1,10 @@
 import audioContext from './audioContext';
 import {samples, sampleTypes} from "./samples";
 
-const bars = 1;
+const bars = 3;
 const beatsPerBar = 4;
 const numberOfSamples = bars * beatsPerBar;
-const bpm = 120;
+const bpm = 120 * 2;
 
 // NOTE: Fixed bpm (not configurable) - matrix will have to update if changed
 
@@ -12,7 +12,8 @@ class AudioManager {
     constructor() {
         this.bars = bars;
         this.beatsPerBar = beatsPerBar;
-        this.numberOfInstruments = samples.length;
+        this.bpm = bpm;
+        this.listener = () => {};
     }
 
     load() {
@@ -50,17 +51,33 @@ class AudioManager {
     }
 
     loop() {
-        this.start(true);
+        this.start(true, true);
     }
 
     start(loop = false) {
-        if (this.interval) return;
+        if (this.interval) {
+            this.stop();
+
+            setTimeout(() => {
+                this.start(loop);
+            }, 0);
+            return;
+        }
 
         let currentStep = 0;
         let nextNoteTime = audioContext.currentTime;
+        let currentBar = 0;
+
+        this.listener({bar: 0});
 
         this.interval = setInterval(() => {
             while (nextNoteTime < audioContext.currentTime + 0.1) {
+                if (currentStep % beatsPerBar === 0 && currentStep !== 0) {
+                    currentBar = (currentBar + 1) % numberOfSamples;
+                    console.log('Emitting', currentStep, currentBar);
+                    this.listener({bar: currentBar});
+                }
+
                 for (let i = 0; i < this.matrix.length; i++) {
                     if (this.matrix[i][currentStep] === true) {
                         const sourceNode = audioContext.createBufferSource();
@@ -76,6 +93,7 @@ class AudioManager {
                 if (!loop && currentStep === 0) {
                     clearInterval(this.interval);
                     this.interval = false;
+                    this.listener({bar: undefined});
                 }
             }
         }, 0);
@@ -84,6 +102,11 @@ class AudioManager {
     stop() {
         clearInterval(this.interval);
         this.interval = false;
+        this.listener({bar: undefined});
+    }
+
+    addEventListener(listener) {
+        this.listener = listener;
     }
 }
 

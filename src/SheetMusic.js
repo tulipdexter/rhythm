@@ -1,53 +1,62 @@
 import React, {Component} from 'react';
-import {samples} from "./audio/samples";
+import {samples, sampleTypes} from "./audio/samples";
 
 class SheetMusic extends Component {
-    getBar(barIndex) {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            currentBar: undefined
+        };
+
+        props.audio.addEventListener(({bar}) => {
+            this.setState({currentBar: bar});
+        });
+    }
+
+    _getRow(drumName, barIdx, matrix, audio) {
+        if (sampleTypes[drumName] === undefined) {
+            throw new Error(`Unknown instrument ${drumName}`);
+        }
+
+        const drumIdx = sampleTypes[drumName];
+
+        // noinspection CheckTagEmptyBody
+        return matrix[drumIdx].slice(barIdx * audio.beatsPerBar, barIdx * audio.beatsPerBar + audio.beatsPerBar)
+            .map((note, noteIdx) =>
+                <span
+                    key={noteIdx}
+                    className={`beat beat--${samples[drumIdx].type}`}
+                    style={{
+                        left: `${(100 / audio.beatsPerBar) * noteIdx}%`
+                    }}
+                ></span>
+            );
+    }
+
+    _getBar(barIdx) {
         const audio = this.props.audio;
         const matrix = audio.matrix;
-        // const beats = [];
-        //
-        // for (let i = 0; i < audio.beatsPerBar; i++) {
-        //     const notes = [];
-        //     for (let sampleIndex = 0; sampleIndex < audio.numberOfInstruments; sampleIndex++) {
-        //         if (matrix[sampleIndex][(barIndex * this.props.audio.beatsPerBar) + i] === true) {
-        //             notes.push(samples[sampleIndex].type);
-        //         }
-        //     }
-        //     beats.push(notes);
-        // }
-        //
-        // const classes = beats.map(note => note.length > 0 ? note.join(' ') : 'half-note-spacer');
+        const animationDuration = (60.0 / audio.bpm) * audio.beatsPerBar;
+
+        const shouldShow = this.state.currentBar === barIdx;
 
         // noinspection CheckTagEmptyBody
         return (
-            <div className="bar" key={barIndex}>
-                {matrix.map((instrument, instrumentIdx) =>
-                    <div className="row" key={instrumentIdx}>
-                        {instrument.slice(barIndex * audio.beatsPerBar, barIndex * audio.beatsPerBar + audio.beatsPerBar)
-                            .map((note, noteIdx) =>
-                                <span
-                                    key={noteIdx}
-                                    className={`beat beat--${samples[instrumentIdx].type}`}
-                                    style={{
-                                        left: `${(100 / audio.beatsPerBar) * noteIdx}%`
-                                    }}
-                                ></span>
-                            )}
-                    </div>
-                )}
-            </div>
+            <div className="bar" key={barIdx}>
+                {shouldShow && <div className="bar-cursor" style={{animationDuration: `${animationDuration}s`}}></div>}
+                <div className="row">{this._getRow('hi-hat', barIdx, matrix, audio)}</div>
+                <div className="row row--line"></div>
+                <div className="row"></div>
+                <div className="row row--line"></div>
+                <div className="row">{this._getRow('snare', barIdx, matrix, audio)}</div>
+                <div className="row row--line"></div>
+                <div className="row"></div>
+                <div className="row row--line"></div>
+                <div className="row">{this._getRow('kick', barIdx, matrix, audio)}</div>
+                <div className="row row--line"></div>
 
-            // <div className="bar" key={barIndex}>
-            //     {/*<div className="stave-header"></div>*/}
-            //     {beats.map(((noteClasses, idx) =>
-            //         <div key={idx} className={'bar__span bar__span--quarter'}>
-            //
-            //             <span className={`note note--quarter note--${noteClasses}`}></span>
-            //         </div>
-            //     ))}
-            //     {/*<div className="bar-line"></div>*/}
-            // </div>
+            </div>
         );
     }
 
@@ -56,7 +65,7 @@ class SheetMusic extends Component {
         const audio = this.props.audio;
 
         for (let i = 0; i < audio.bars; i++) {
-            bars.push(this.getBar(i));
+            bars.push(this._getBar(i));
         }
         return (
             <div className="sheet-music">

@@ -14,15 +14,17 @@ class App extends Component {
 
         this.audio = new AudioManager();
         this.audio.load().then(() => {
-            this.audio.addNote('hi-hat', 0); // TODO: define length.  E.g. quarter, eighth, sixteenth.  How to do triplets?
-            this.audio.addNote('kick', 0);
+            for (let i=0; i < this.audio.bars; i++) {
+                this.audio.addNote('hi-hat', (i * this.audio.beatsPerBar) + 0); // TODO: define length.  E.g. quarter, eighth, sixteenth.  How to do triplets?
+                this.audio.addNote('kick', (i * this.audio.beatsPerBar) + 0);
 
-            this.audio.addNote('hi-hat', 1);
+                this.audio.addNote('hi-hat', (i * this.audio.beatsPerBar) + 1);
 
-            this.audio.addNote('hi-hat', 2);
-            this.audio.addNote('snare', 2);
+                this.audio.addNote('hi-hat', (i * this.audio.beatsPerBar) + 2);
+                this.audio.addNote('snare', (i * this.audio.beatsPerBar) + 2);
 
-            this.audio.addNote('hi-hat', 3);
+                this.audio.addNote('hi-hat', (i * this.audio.beatsPerBar) + 3);
+            }
 
             this.setState({
                 loaded: true
