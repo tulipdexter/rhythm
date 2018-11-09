@@ -2,7 +2,7 @@ import hihat from './hi-hat.wav';
 import kick from './kick.wav';
 import snare from './snare.wav';
 
-const samples = [
+export const samples = [
     {
         type: 'hi-hat',
         path: hihat
@@ -17,4 +17,7 @@ const samples = [
     }
 ];
 
-export default samples;
+export const sampleTypes = samples.reduce((accumulator, current, index) => {
+    accumulator[current.type] = index;
+    return accumulator;
+}, {});

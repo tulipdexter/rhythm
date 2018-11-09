@@ -361,28 +361,3 @@ h1 {
   margin-top: 2rem;
   margin-bottom: 2rem;
 }
-
-.bar__span {
-  height: 1.5em; /* (bar height / 4) rows */
-}
-
-.bar__span--quarter {
-  grid-column: span 4; /* quarter of 16 cols - better with SASS */
-}
-
-.note {
-  background-position: left bottom;
-  background-repeat: no-repeat;
-  background-size: 100% auto;
-  display: block;
-  height: 4.5em;
-}
-
-.note--quarter {
-  width: 25%;
-}
-
-.note--hi-hat {
-  background-image: url("/images/hi-hat-quarter.svg");
-  transform: translateY(-4.5rem);
-}

@@ -5,6 +5,10 @@ class Player extends Component {
         this.props.audio.start();
     }
 
+    loop() {
+        this.props.audio.loop();
+    }
+
     stop() {
         this.props.audio.stop();
     }
@@ -14,6 +18,7 @@ class Player extends Component {
         return (
             <div>
                 <button onClick={() => this.start()}>Start</button>
+                <button onClick={() => this.loop()}>Loop</button>
                 <button onClick={() => this.stop()}>Stop</button>
             </div>
         );

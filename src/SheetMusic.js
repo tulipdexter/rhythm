@@ -1,38 +1,53 @@
-import React, { Component } from 'react';
-
-const sampleIndexToNote = {
-    0: 'hi-hat',
-    1: 'kick',
-    2: 'snare'
-};
+import React, {Component} from 'react';
+import {samples} from "./audio/samples";
 
 class SheetMusic extends Component {
     getBar(barIndex) {
         const audio = this.props.audio;
         const matrix = audio.matrix;
-        const notes = [];
-        for (let i = 0; i < audio.beatsPerBar; i++) {
-            const note = [];
-            for (let sampleIndex = 0; sampleIndex < audio.numberOfInstruments; sampleIndex++) {
-                if (matrix[sampleIndex][(barIndex * this.props.audio.beatsPerBar) + i] === true) {
-                    note.push(sampleIndexToNote[sampleIndex]);
-                }
-            }
-            notes.push(note);
-        }
+        // const beats = [];
+        //
+        // for (let i = 0; i < audio.beatsPerBar; i++) {
+        //     const notes = [];
+        //     for (let sampleIndex = 0; sampleIndex < audio.numberOfInstruments; sampleIndex++) {
+        //         if (matrix[sampleIndex][(barIndex * this.props.audio.beatsPerBar) + i] === true) {
+        //             notes.push(samples[sampleIndex].type);
+        //         }
+        //     }
+        //     beats.push(notes);
+        // }
+        //
+        // const classes = beats.map(note => note.length > 0 ? note.join(' ') : 'half-note-spacer');
 
-        const classes = notes.map(note => note.length > 0 ? note.join(' ') : 'half-note-spacer');
-
+        // noinspection CheckTagEmptyBody
         return (
             <div className="bar" key={barIndex}>
-                {/*<div className="stave-header"></div>*/}
-                {classes.map(((noteClasses, idx) =>
-                    <div key={idx} className={'bar__span bar__span--quarter'}>
-                        <span className={`note note--quarter note--${noteClasses}`}></span>
+                {matrix.map((instrument, instrumentIdx) =>
+                    <div className="row" key={instrumentIdx}>
+                        {instrument.slice(barIndex * audio.beatsPerBar, barIndex * audio.beatsPerBar + audio.beatsPerBar)
+                            .map((note, noteIdx) =>
+                                <span
+                                    key={noteIdx}
+                                    className={`beat beat--${samples[instrumentIdx].type}`}
+                                    style={{
+                                        left: `${(100 / audio.beatsPerBar) * noteIdx}%`
+                                    }}
+                                ></span>
+                            )}
                     </div>
-                ))}
-                {/*<div className="bar-line"></div>*/}
+                )}
             </div>
+
+            // <div className="bar" key={barIndex}>
+            //     {/*<div className="stave-header"></div>*/}
+            //     {beats.map(((noteClasses, idx) =>
+            //         <div key={idx} className={'bar__span bar__span--quarter'}>
+            //
+            //             <span className={`note note--quarter note--${noteClasses}`}></span>
+            //         </div>
+            //     ))}
+            //     {/*<div className="bar-line"></div>*/}
+            // </div>
         );
     }
 

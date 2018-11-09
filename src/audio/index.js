@@ -1,12 +1,12 @@
 import audioContext from './audioContext';
-import samples from './samples';
+import {samples, sampleTypes} from "./samples";
 
-const bars = 4;
+const bars = 1;
 const beatsPerBar = 4;
 const numberOfSamples = bars * beatsPerBar;
 const bpm = 120;
 
-// NOTE: Fixed bpm (not configurable) - matirx will have to update if changed
+// NOTE: Fixed bpm (not configurable) - matrix will have to update if changed
 
 class AudioManager {
     constructor() {
@@ -31,33 +31,29 @@ class AudioManager {
 
         return Promise.all(promises).then(decodedBuffers => {
             this.sounds = decodedBuffers;
-
-            this.sampleTypes = samples.reduce((accumulator, current, index) => {
-                accumulator[current.type] = index;
-                return accumulator;
-            }, {});
-
+            
             this.matrix = [];
             for (let i = 0; i < samples.length; i++)  {
                 this.matrix.push(new Array(numberOfSamples));
             }
-
-            console.log(this.matrix);
         });
     }
 
     addNote(sampleType, samplePosition) {
-        const index = this.sampleTypes[sampleType];
-        console.log(index);
-        this.matrix[index][samplePosition] = true; // TODO: Check why this is here.  Think this stops multiple notes in same position.
+        const sampleIndex = sampleTypes[sampleType];
+        this.matrix[sampleIndex][samplePosition] = true;
     }
 
-    // removeNote(sampleType, samplePosition) {
-    //     const index = this.sampleTypes[sampleType];
-    //     this.matrix[index][samplePosition] = false;
-    // }
+    removeNote(sampleType, samplePosition) {
+        const index = sampleTypes[sampleType];
+        this.matrix[index][samplePosition] = false;
+    }
 
-    start() {
+    loop() {
+        this.start(true);
+    }
+
+    start(loop = false) {
         if (this.interval) return;
 
         let currentStep = 0;
@@ -76,13 +72,18 @@ class AudioManager {
 
                 nextNoteTime += 60.0 / bpm;
                 currentStep = (currentStep + 1) % numberOfSamples;
+
+                if (!loop && currentStep === 0) {
+                    clearInterval(this.interval);
+                    this.interval = false;
+                }
             }
         }, 0);
     }
 
     stop() {
         clearInterval(this.interval);
-        this.interval = undefined;
+        this.interval = false;
     }
 }
 
