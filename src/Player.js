@@ -1,25 +1,24 @@
 import React, { Component } from 'react';
 
 class Player extends Component {
-    start() {
+    start = () => {
         this.props.audio.start();
     }
 
-    loop() {
+    loop = () => {
         this.props.audio.loop();
     }
 
-    stop() {
+    stop = () => {
         this.props.audio.stop();
     }
 
     render() {
-        // When react calls onClick, _this_ context isn't correct.  Fat arrow _thus_ context is correct.
         return (
             <div>
-                <button onClick={() => this.start()}>Start</button>
-                <button onClick={() => this.loop()}>Loop</button>
-                <button onClick={() => this.stop()}>Stop</button>
+                <button onClick={this.start}>Start</button>
+                <button onClick={this.loop}>Loop</button>
+                <button onClick={this.stop}>Stop</button>
             </div>
         );
     }
