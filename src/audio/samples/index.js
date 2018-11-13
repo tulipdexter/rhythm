@@ -2,17 +2,21 @@ import hihat from './hi-hat.wav';
 import kick from './kick.wav';
 import snare from './snare.wav';
 
+export const HI_HAT = 'hi-hat';
+export const KICK = 'kick';
+export const SNARE = 'snare';
+
 export const samples = [
     {
-        type: 'hi-hat',
+        type: HI_HAT,
         path: hihat
     },
     {
-        type: 'kick',
+        type: KICK,
         path: kick
     },
     {
-        type: 'snare',
+        type: SNARE,
         path: snare
     }
 ];

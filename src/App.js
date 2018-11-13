@@ -2,7 +2,24 @@ import React, {Component} from 'react';
 import Player from './Player';
 import AudioManager from './audio';
 import SheetMusic from './SheetMusic';
+import { HI_HAT, KICK, SNARE } from './audio/samples';
 import './App.css';
+
+// TODO: Transition constant arrangement to editable state.
+const arrangement = [
+    {
+        instrument: HI_HAT,
+        positions: [0, 1, 2, 3],
+    },
+    {
+        instrument: KICK,
+        positions: [0],
+    },
+    {
+        instrument: SNARE,
+        positions: [2],
+    },
+];
 
 class App extends Component {
     constructor(p, c) {
@@ -15,15 +32,13 @@ class App extends Component {
         this.audio = new AudioManager();
         this.audio.load().then(() => {
             for (let i=0; i < this.audio.bars; i++) {
-                this.audio.addNote('hi-hat', (i * this.audio.beatsPerBar) + 0); // TODO: define length.  E.g. quarter, eighth, sixteenth.  How to do triplets?
-                this.audio.addNote('kick', (i * this.audio.beatsPerBar) + 0);
-
-                this.audio.addNote('hi-hat', (i * this.audio.beatsPerBar) + 1);
-
-                this.audio.addNote('hi-hat', (i * this.audio.beatsPerBar) + 2);
-                this.audio.addNote('snare', (i * this.audio.beatsPerBar) + 2);
-
-                this.audio.addNote('hi-hat', (i * this.audio.beatsPerBar) + 3);
+                // TODO: define length.  E.g. quarter, eighth, sixteenth.  How to do triplets?
+                const beatsElapsed = i * this.audio.beatsPerBar;
+                arrangement.forEach(({ instrument, positions }) => {
+                    positions.forEach(position => {
+                        this.audio.addNote(instrument, beatsElapsed + position);
+                    });
+                });
             }
 
             this.setState({
